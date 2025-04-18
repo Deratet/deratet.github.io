@@ -3,231 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Color Palette</title>
+    <title>Color Picker</title>
     <style>
-        @font-face {
-            font-family: 'Benzin Bold';
-            src: url('https://fonts.cdnfonts.com/css/benzin') format('woff2');
-            font-weight: bold;
-            font-style: normal;
-            font-display: swap;
-        }
-
-        :root {
-            --primary-color: #ffffff;
-            --secondary-color: rgba(255, 255, 255, 0.8);
-            --accent-color: #ff6b6b;
-            --glass-blur: 20px;
-            --card-padding: 40px;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
         body {
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
+            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(-45deg, #657A8D, #4F6070, #3C4A57, #2B353F);
-            background-size: 400% 400%;
-            animation: gradient 12s ease infinite;
-            overflow: hidden;
-            font-family: 'Benzin Bold', sans-serif;
+            min-height: 100vh;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .color-picker-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .color-display {
+            width: 100%;
+            height: 200px;
+            border-radius: 8px;
+            margin-bottom: 20px;
             position: relative;
-            color: var(--primary-color);
-        }
-
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Вертикальные полосы */
-        .stripe {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.15);
-            width: 2px;
-            height: 150px;
-            animation: fly linear infinite;
-            animation-duration: calc(var(--speed) * 1s);
-            animation-delay: calc(var(--delay) * -1s);
-            left: calc(var(--pos) * 1%);
-            top: 0;
-            transform: translateY(-150px);
-            filter: blur(0.5px);
-        }
-
-        @keyframes fly {
-            0% { transform: translateY(-150px); }
-            100% { transform: translateY(100vh); }
-        }
-
-        /* Основная карточка */
-        .card {
-            position: relative;
-            backdrop-filter: blur(var(--glass-blur));
-            -webkit-backdrop-filter: blur(var(--glass-blur));
-            background-color: rgba(255, 255, 255, 0.08);
-            border-radius: 24px;
-            padding: var(--card-padding);
-            box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.3),
-                inset 0 0 12px rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            z-index: 10;
-            max-width: 90%;
-            width: 600px;
             overflow: hidden;
+            background: linear-gradient(to right, 
+                #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
         }
 
-        /* Эффект стекла */
-        .card::before {
-            content: '';
+        .color-gradient {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+        }
+
+        .picker-circle {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(
-                135deg,
-                rgba(255, 255, 255, 0.1) 0%,
-                rgba(255, 255, 255, 0.03) 50%,
-                rgba(255, 255, 255, 0.1) 100%
-            );
-            z-index: -1;
-            border-radius: inherit;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+            transform: translate(-10px, -10px);
             pointer-events: none;
+            z-index: 2;
         }
 
-        /* Палитра цветов */
-        .palette-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 2px;
-            margin: 20px 0;
-            max-height: 400px;
-            overflow-y: auto;
-            padding: 10px;
+        .color-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
         }
 
-        .color-box {
-            width: 30px;
-            height: 30px;
-            cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: transform 0.2s;
+        .color-format {
+            margin-bottom: 10px;
         }
 
-        .color-box:hover {
-            transform: scale(1.1);
-            border: 1px solid white;
-        }
-
-        #selected-color {
-            margin-top: 20px;
-            text-align: center;
+        .color-format h3 {
+            margin: 0 0 5px 0;
             font-size: 16px;
-            color: var(--primary-color);
         }
 
-        /* Кнопка домой */
+        .color-value {
+            background: #f0f0f0;
+            padding: 8px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
         .home-btn {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 30px;
+            display: inline-block;
+            margin-top: 20px;
+            padding: 8px 16px;
+            background: #4a6fa5;
             color: white;
             text-decoration: none;
-            font-family: 'Benzin Bold', sans-serif;
-            transition: all 0.3s ease;
-            z-index: 100;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: background 0.3s;
         }
 
         .home-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-
-        /* Адаптивность */
-        @media (max-width: 768px) {
-            :root {
-                --glass-blur: 15px;
-                --card-padding: 20px;
-            }
-            
-            .color-box {
-                width: 25px;
-                height: 25px;
-            }
+            background: #3a5a8f;
         }
     </style>
 </head>
 <body>
-    <!-- Кнопка домой -->
-    <a href="index.html" class="home-btn">← Домой</a>
-
-    <!-- Основной контент -->
-    <div class="card">
-        <div class="palette-container" id="palette-container"></div>
-        <div id="selected-color">
-            Выбранный цвет: <span id="color-value">rgb(255, 255, 255)</span>
+    <div class="color-picker-container">
+        <h2>Color Picker</h2>
+        
+        <div class="color-display">
+            <div class="color-gradient"></div>
+            <div class="picker-circle" id="picker"></div>
         </div>
+        
+        <div class="color-info">
+            <div class="color-format">
+                <h3>HEX</h3>
+                <div class="color-value" id="hex-value">#ffffff</div>
+            </div>
+            
+            <div class="color-format">
+                <h3>RGB</h3>
+                <div class="color-value" id="rgb-value">255, 255, 255</div>
+            </div>
+            
+            <div class="color-format">
+                <h3>HSL</h3>
+                <div class="color-value" id="hsl-value">0°, 0%, 100%</div>
+            </div>
+            
+            <div class="color-format">
+                <h3>HSV</h3>
+                <div class="color-value" id="hsv-value">0°, 0%, 100%</div>
+            </div>
+        </div>
+        
+        <a href="index.html" class="home-btn">← Back to Home</a>
     </div>
 
     <script>
-        // Генерация полос
-        document.addEventListener('DOMContentLoaded', function() {
-            const container = document.body;
-            const stripeCount = Math.floor(window.innerWidth / 20);
-            const speedRange = [4, 8];
+        const colorDisplay = document.querySelector('.color-display');
+        const picker = document.getElementById('picker');
+        const hexValue = document.getElementById('hex-value');
+        const rgbValue = document.getElementById('rgb-value');
+        const hslValue = document.getElementById('hsl-value');
+        const hsvValue = document.getElementById('hsv-value');
+        
+        let isDragging = false;
+        
+        // Set initial position (center)
+        const initX = colorDisplay.offsetWidth / 2;
+        const initY = colorDisplay.offsetHeight / 2;
+        picker.style.left = `${initX}px`;
+        picker.style.top = `${initY}px`;
+        updateColor(initX, initY);
+        
+        // Mouse/touch events
+        colorDisplay.addEventListener('mousedown', startDrag);
+        colorDisplay.addEventListener('touchstart', startDrag);
+        
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('touchmove', drag);
+        
+        document.addEventListener('mouseup', endDrag);
+        document.addEventListener('touchend', endDrag);
+        
+        function startDrag(e) {
+            isDragging = true;
+            updatePickerPosition(e);
+            e.preventDefault();
+        }
+        
+        function drag(e) {
+            if (isDragging) {
+                updatePickerPosition(e);
+            }
+        }
+        
+        function endDrag() {
+            isDragging = false;
+        }
+        
+        function updatePickerPosition(e) {
+            const rect = colorDisplay.getBoundingClientRect();
+            let x, y;
             
-            for (let i = 0; i < stripeCount; i++) {
-                const stripe = document.createElement('div');
-                stripe.className = 'stripe';
-                const pos = (i / stripeCount * 100) + (Math.random() * 2 - 1);
-                stripe.style.setProperty('--pos', pos);
-                const speed = Math.random() * (speedRange[1] - speedRange[0]) + speedRange[0];
-                stripe.style.setProperty('--speed', speed);
-                stripe.style.setProperty('--delay', Math.random() * speed);
-                if (pos >= 0 && pos <= 100) {
-                    container.appendChild(stripe);
-                }
+            if (e.type.includes('touch')) {
+                x = e.touches[0].clientX - rect.left;
+                y = e.touches[0].clientY - rect.top;
+            } else {
+                x = e.clientX - rect.left;
+                y = e.clientY - rect.top;
             }
-
-            // Генерация палитры
-            const paletteContainer = document.getElementById('palette-container');
-            const selectedColorValue = document.getElementById('color-value');
-
-            function generatePalette() {
-                for (let r = 0; r <= 255; r += 51) {
-                    for (let g = 0; g <= 255; g += 51) {
-                        for (let b = 0; b <= 255; b += 51) {
-                            const color = `rgb(${r}, ${g}, ${b})`;
-                            const colorBox = document.createElement('div');
-                            colorBox.classList.add('color-box');
-                            colorBox.style.backgroundColor = color;
-                            colorBox.title = color;
-                            colorBox.addEventListener('click', () => {
-                                selectedColorValue.textContent = color;
-                            });
-                            paletteContainer.appendChild(colorBox);
-                        }
-                    }
-                }
+            
+            // Constrain to color display area
+            x = Math.max(0, Math.min(x, rect.width));
+            y = Math.max(0, Math.min(y, rect.height));
+            
+            picker.style.left = `${x}px`;
+            picker.style.top = `${y}px`;
+            
+            updateColor(x, y);
+        }
+        
+        function updateColor(x, y) {
+            const hue = (x / colorDisplay.offsetWidth) * 360;
+            const saturation = 100;
+            const lightness = 100 - (y / colorDisplay.offsetHeight) * 100;
+            
+            // Convert HSL to RGB
+            const rgb = hslToRgb(hue / 360, saturation / 100, lightness / 100);
+            const r = Math.round(rgb[0] * 255);
+            const g = Math.round(rgb[1] * 255);
+            const b = Math.round(rgb[2] * 255);
+            
+            // Convert RGB to HEX
+            const hex = rgbToHex(r, g, b);
+            
+            // Convert HSL to HSV
+            const hsv = hslToHsv(hue, saturation, lightness);
+            
+            // Update display
+            hexValue.textContent = `#${hex}`;
+            rgbValue.textContent = `${r}, ${g}, ${b}`;
+            hslValue.textContent = `${Math.round(hue)}°, ${Math.round(saturation)}%, ${Math.round(lightness)}%`;
+            hsvValue.textContent = `${Math.round(hsv.h)}°, ${Math.round(hsv.s)}%, ${Math.round(hsv.v)}%`;
+            
+            // Update picker color
+            picker.style.backgroundColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        }
+        
+        // Helper functions
+        function hslToRgb(h, s, l) {
+            let r, g, b;
+            
+            if (s === 0) {
+                r = g = b = l;
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1/6) return p + (q - p) * 6 * t;
+                    if (t < 1/2) return q;
+                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+                
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
             }
-
-            generatePalette();
-        });
+            
+            return [r, g, b];
+        }
+        
+        function rgbToHex(r, g, b) {
+            return ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        }
+        
+        function hslToHsv(h, s, l) {
+            s = s / 100;
+            l = l / 100;
+            
+            const v = l + s * Math.min(l, 1 - l);
+            const s2 = v === 0 ? 0 : 2 * (1 - l / v);
+            
+            return {
+                h: h,
+                s: s2 * 100,
+                v: v * 100
+            };
+        }
     </script>
 </body>
 </html>
